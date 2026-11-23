@@ -1,0 +1,2 @@
+const jwt=require("jsonwebtoken"),User=require("../models/User");
+module.exports=async(req,res,next)=>{try{const h=req.headers.authorization||"",t=h.startsWith("Bearer ")?h.slice(7):null;if(!t)return res.status(401).json({message:"Please log in"});const d=jwt.verify(t,process.env.JWT_SECRET);const u=await User.findById(d.userId).select("-password");if(!u)return res.status(401).json({message:"User not found"});req.user=u;next();}catch(e){res.status(401).json({message:"Invalid or expired session"});}};
